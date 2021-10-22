@@ -6,8 +6,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Game } from 'src/games/game.entity';
 
 @Entity()
 @Unique(['email'])
@@ -20,6 +22,12 @@ export class User extends BaseEntity {
 
   @Column({ nullable: false, type: 'varchar', length: 100 })
   name: string;
+
+  @Column({ nullable: false })
+  birthday: string;
+
+  @Column({ nullable: true, type: 'varchar', length: 255 })
+  bio: string;
 
   @Column({ nullable: false, type: 'varchar', length: 20 })
   role: string;
@@ -44,6 +52,9 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Game, (game) => game.user)
+  games: Game[];
 
   async checkPassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
